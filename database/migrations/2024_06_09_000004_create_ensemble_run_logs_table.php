@@ -25,4 +25,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('ensemble_run_logs');
     }
-}; 
+};

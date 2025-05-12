@@ -2,22 +2,16 @@
 
 namespace BuildWithLaravel\Ensemble\Core;
 
-use Illuminate\Support\Fluent;
 use BuildWithLaravel\Ensemble\Enums\InterruptType;
+use Illuminate\Support\Fluent;
 
 /**
  * Abstract base class for agent state DTOs.
  */
 abstract class State extends Fluent
 {
-    /**
-     * @var null|InterruptType
-     */
     protected ?InterruptType $interrupt = null;
 
-    /**
-     * @var null|array
-     */
     protected ?array $meta = null;
 
     /**
@@ -38,6 +32,7 @@ abstract class State extends Fluent
     {
         $this->interrupt = InterruptType::Halt;
         $this->meta = ['reason' => $reason];
+
         return $this;
     }
 
@@ -45,6 +40,7 @@ abstract class State extends Fluent
     {
         $this->interrupt = InterruptType::Retry;
         $this->meta = ['reason' => $reason];
+
         return $this;
     }
 
@@ -52,6 +48,7 @@ abstract class State extends Fluent
     {
         $this->interrupt = InterruptType::WaitHuman;
         $this->meta = ['tag' => $tag, 'message' => $message];
+
         return $this;
     }
 
@@ -59,6 +56,7 @@ abstract class State extends Fluent
     {
         $this->interrupt = InterruptType::WaitEvent;
         $this->meta = ['event' => $event, 'payload' => $payload];
+
         return $this;
     }
 
@@ -66,6 +64,7 @@ abstract class State extends Fluent
     {
         $this->interrupt = InterruptType::CallTool;
         $this->meta = ['tool' => $tool, 'arguments' => $arguments];
+
         return $this;
     }
 
@@ -73,6 +72,7 @@ abstract class State extends Fluent
     {
         $this->interrupt = InterruptType::Delegate;
         $this->meta = ['agent_class' => $agentClass, 'initial_state' => $initialStateData];
+
         return $this;
     }
 
@@ -80,6 +80,7 @@ abstract class State extends Fluent
     {
         $this->interrupt = InterruptType::Done;
         $this->meta = ['result' => $result];
+
         return $this;
     }
 
@@ -109,6 +110,7 @@ abstract class State extends Fluent
                 $this->$key = $value;
             }
         }
+
         return $this;
     }
 
@@ -119,4 +121,4 @@ abstract class State extends Fluent
     {
         return new static($data);
     }
-} 
+}

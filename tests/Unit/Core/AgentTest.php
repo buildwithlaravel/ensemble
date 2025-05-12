@@ -9,9 +9,7 @@ use Prism\Prism\Enums\Provider;
 use Prism\Prism\Prism;
 
 // Create a concrete implementation of Agent for testing
-class TestAgent extends Agent
-{
-}
+class TestAgent extends Agent {}
 
 test('it uses config defaults when no properties are set', function () {
     /** @var TestCase $this */
@@ -24,7 +22,7 @@ test('it uses config defaults when no properties are set', function () {
         ->andReturnSelf();
     $this->app->instance(Prism::class, $prismMock);
 
-    $agent = new TestAgent();
+    $agent = new TestAgent;
     $prism = null;
 
     $agent->withPrism(function ($p) use (&$prism) {
@@ -46,8 +44,10 @@ test('it uses agent properties over config defaults', function () {
         ->andReturnSelf();
     $this->app->instance(Prism::class, $prismMock);
 
-    $agent = new class extends Agent {
+    $agent = new class extends Agent
+    {
         protected ?Provider $provider = Provider::Anthropic;
+
         protected ?string $model = 'claude-2';
     };
 
@@ -68,7 +68,7 @@ test('withPrism executes the callback', function () {
     $prismMock->shouldReceive('using')->andReturnSelf();
     $this->app->instance(Prism::class, $prismMock);
 
-    $agent = new TestAgent();
+    $agent = new TestAgent;
     $called = false;
 
     $agent->withPrism(function ($prism) use (&$called) {
@@ -86,8 +86,8 @@ test('withPrism returns the agent instance', function () {
     $prismMock->shouldReceive('using')->andReturnSelf();
     $this->app->instance(Prism::class, $prismMock);
 
-    $agent = new TestAgent();
+    $agent = new TestAgent;
     $result = $agent->withPrism(function ($prism) {});
 
     expect($result)->toBe($agent);
-}); 
+});

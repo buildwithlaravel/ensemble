@@ -34,4 +34,4 @@ return [
             'model' => env('LLM_MODEL', 'gpt-4'),
         ],
     ],
-]; 
+];

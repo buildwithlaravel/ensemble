@@ -6,8 +6,6 @@ class Parallel
 {
     /**
      * The steps to be executed in parallel.
-     *
-     * @var array
      */
     public array $steps;
 
@@ -26,4 +24,4 @@ class Parallel
     {
         return new self($steps);
     }
-} 
+}

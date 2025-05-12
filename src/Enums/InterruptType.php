@@ -11,4 +11,4 @@ enum InterruptType: string
     case CallTool = 'call_tool';
     case Delegate = 'delegate';
     case Done = 'done';
-} 
+}

@@ -3,7 +3,6 @@
 namespace BuildWithLaravel\Ensemble\Tests\Unit\Support;
 
 use BuildWithLaravel\Ensemble\Support\Parallel;
-use BuildWithLaravel\Ensemble\Tests\TestCase;
 
 test('it can be instantiated with an array of steps', function () {
     $steps = [
@@ -28,4 +27,4 @@ test('it can be created using the make method', function () {
         ->toBeInstanceOf(Parallel::class)
         ->and($parallel->steps)
         ->toBe($steps);
-}); 
+});

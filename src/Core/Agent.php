@@ -10,7 +10,7 @@ use Prism\Prism\Prism;
  */
 abstract class Agent
 {
-      protected ?Provider $provider = null;
+    protected ?Provider $provider = null;
 
     protected ?string $model = null;
 
@@ -62,6 +62,7 @@ abstract class Agent
     public function withPrism(callable $callback): static
     {
         $callback($this->getPrismClient());
+
         return $this;
     }
 }

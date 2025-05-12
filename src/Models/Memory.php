@@ -2,8 +2,8 @@
 
 namespace BuildWithLaravel\Ensemble\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Memory extends Model
@@ -11,7 +11,9 @@ class Memory extends Model
     use HasUuids;
 
     protected $table = 'ensemble_memories';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -30,4 +32,4 @@ class Memory extends Model
     {
         return $this->morphTo();
     }
-} 
+}

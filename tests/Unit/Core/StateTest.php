@@ -7,6 +7,7 @@ use BuildWithLaravel\Ensemble\Enums\InterruptType;
 class TestState extends State
 {
     public string $name = '';
+
     public int $count = 0;
 }
 
@@ -49,7 +50,7 @@ test('it creates instances with static from method', function () {
 });
 
 test('it sets halt interrupt', function () {
-    $state = new TestState();
+    $state = new TestState;
     $result = $state->halt('Testing halt');
 
     expect($result)->toBe($state);
@@ -59,7 +60,7 @@ test('it sets halt interrupt', function () {
 });
 
 test('it sets retry interrupt', function () {
-    $state = new TestState();
+    $state = new TestState;
     $result = $state->retry('Testing retry');
 
     expect($result)->toBe($state);
@@ -69,7 +70,7 @@ test('it sets retry interrupt', function () {
 });
 
 test('it sets waitForHuman interrupt', function () {
-    $state = new TestState();
+    $state = new TestState;
     $result = $state->waitForHuman('confirm', 'Please confirm this action');
 
     expect($result)->toBe($state);
@@ -77,12 +78,12 @@ test('it sets waitForHuman interrupt', function () {
     expect($state->getInterrupt())->toBe(InterruptType::WaitHuman);
     expect($state->getMeta())->toBe([
         'tag' => 'confirm',
-        'message' => 'Please confirm this action'
+        'message' => 'Please confirm this action',
     ]);
 });
 
 test('it sets waitForEvent interrupt', function () {
-    $state = new TestState();
+    $state = new TestState;
     $payload = ['action' => 'test', 'id' => 123];
     $result = $state->waitForEvent('user.input', $payload);
 
@@ -91,12 +92,12 @@ test('it sets waitForEvent interrupt', function () {
     expect($state->getInterrupt())->toBe(InterruptType::WaitEvent);
     expect($state->getMeta())->toBe([
         'event' => 'user.input',
-        'payload' => $payload
+        'payload' => $payload,
     ]);
 });
 
 test('it sets callTool interrupt', function () {
-    $state = new TestState();
+    $state = new TestState;
     $arguments = ['prompt' => 'Generate an image', 'style' => 'cartoon'];
     $result = $state->callTool('image_generator', $arguments);
 
@@ -105,12 +106,12 @@ test('it sets callTool interrupt', function () {
     expect($state->getInterrupt())->toBe(InterruptType::CallTool);
     expect($state->getMeta())->toBe([
         'tool' => 'image_generator',
-        'arguments' => $arguments
+        'arguments' => $arguments,
     ]);
 });
 
 test('it sets delegate interrupt', function () {
-    $state = new TestState();
+    $state = new TestState;
     $initialStateData = ['name' => 'Delegated Task', 'priority' => 'high'];
     $result = $state->delegate('App\\Agents\\SearchAgent', $initialStateData);
 
@@ -119,12 +120,12 @@ test('it sets delegate interrupt', function () {
     expect($state->getInterrupt())->toBe(InterruptType::Delegate);
     expect($state->getMeta())->toBe([
         'agent_class' => 'App\\Agents\\SearchAgent',
-        'initial_state' => $initialStateData
+        'initial_state' => $initialStateData,
     ]);
 });
 
 test('it sets done interrupt', function () {
-    $state = new TestState();
+    $state = new TestState;
     $resultData = ['status' => 'success', 'data' => ['id' => 123]];
     $result = $state->done($resultData);
 
@@ -135,14 +136,14 @@ test('it sets done interrupt', function () {
 });
 
 test('isInterrupted returns false when not interrupted', function () {
-    $state = new TestState();
+    $state = new TestState;
     expect($state->isInterrupted())->toBeFalse();
     expect($state->getInterrupt())->toBeNull();
     expect($state->getMeta())->toBeNull();
 });
 
 test('it supports being initialized with no data', function () {
-    $state = new TestState();
+    $state = new TestState;
     expect($state->name)->toBe('');
     expect($state->count)->toBe(0);
-}); 
+});

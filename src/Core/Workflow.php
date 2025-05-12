@@ -41,7 +41,7 @@ class Workflow
     {
         return array_map(function ($step) {
             if (is_string($step)) {
-                return new $step();
+                return new $step;
             }
 
             return $step;
@@ -74,26 +74,27 @@ class Workflow
         for ($i = $this->currentIndex; $i < $totalSteps; $i++) {
             // Store current index before executing step
             $this->currentIndex = $i;
-            
+
             $stepInstance = $this->steps[$this->currentIndex];
 
             // Handle parallel execution
             if ($stepInstance instanceof Parallel) {
                 $state = $this->executeParallelSteps($stepInstance, $state);
-                
+
                 // Check if state was interrupted during parallel execution
                 if ($state->isInterrupted()) {
                     $this->persistRunState($state);
+
                     return $state;
                 }
-                
+
                 continue;
             }
 
             // Execute single step
             $resultState = $stepInstance->handle($this->agent, $state);
 
-            if (!$resultState instanceof State) {
+            if (! $resultState instanceof State) {
                 throw new RuntimeException(
                     sprintf('Step %s must return an instance of %s', get_class($stepInstance), State::class)
                 );
@@ -102,6 +103,7 @@ class Workflow
             // Check for interrupts
             if ($resultState->isInterrupted()) {
                 $this->persistRunState($resultState);
+
                 return $resultState;
             }
 
@@ -122,7 +124,7 @@ class Workflow
         $jobs = array_map(function ($step) {
             return new \BuildWithLaravel\Ensemble\Jobs\RunStepJob(
                 $this->agent->run()->id,
-                is_string($step) ? new $step() : $step
+                is_string($step) ? $step : get_class($step)
             );
         }, $parallel->steps);
 
@@ -154,4 +156,4 @@ class Workflow
             'state' => $state,
         ]);
     }
-} 
+}

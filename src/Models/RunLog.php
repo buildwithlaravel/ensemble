@@ -2,8 +2,8 @@
 
 namespace BuildWithLaravel\Ensemble\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RunLog extends Model
@@ -11,7 +11,9 @@ class RunLog extends Model
     use HasUuids;
 
     protected $table = 'ensemble_run_logs';
+
     public $incrementing = false;
+
     protected $keyType = 'string';
 
     protected $fillable = [
@@ -30,4 +32,4 @@ class RunLog extends Model
     {
         return $this->belongsTo(Run::class, 'run_id');
     }
-} 
+}

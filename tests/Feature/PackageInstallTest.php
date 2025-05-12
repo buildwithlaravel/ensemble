@@ -1,14 +1,14 @@
 <?php
 
-use Orchestra\Testbench\TestCase;
 use BuildWithLaravel\Ensemble\EnsembleFacade;
 use BuildWithLaravel\Ensemble\EnsembleServiceProvider;
+use Orchestra\Testbench\TestCase;
 
 uses(TestCase::class)
     ->beforeEach(function () {
         $this->app->register(EnsembleServiceProvider::class);
         $this->app->alias('Ensemble', EnsembleFacade::class);
-        if (!class_exists('Ensemble')) {
+        if (! class_exists('Ensemble')) {
             class_alias(\BuildWithLaravel\Ensemble\EnsembleFacade::class, 'Ensemble');
         }
     });
@@ -21,4 +21,4 @@ test('ensemble facade is resolvable', function () {
 test('ensemble facade is resolvable via alias', function () {
     expect(\Ensemble::getFacadeRoot())
         ->toBeInstanceOf(\BuildWithLaravel\Ensemble\Ensemble::class);
-}); 
+});
