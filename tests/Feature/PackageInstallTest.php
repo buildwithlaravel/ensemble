@@ -8,6 +8,9 @@ uses(TestCase::class)
     ->beforeEach(function () {
         $this->app->register(EnsembleServiceProvider::class);
         $this->app->alias('Ensemble', EnsembleFacade::class);
+        if (!class_exists('Ensemble')) {
+            class_alias(\BuildWithLaravel\Ensemble\EnsembleFacade::class, 'Ensemble');
+        }
     });
 
 test('ensemble facade is resolvable', function () {
