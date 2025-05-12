@@ -1,6 +1,6 @@
 <?php
 
-namespace Buildwithlaravel\Ensemble;
+namespace BuildWithLaravel\Ensemble;
 
 use Illuminate\Support\ServiceProvider;
 

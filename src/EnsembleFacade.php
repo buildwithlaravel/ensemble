@@ -1,11 +1,11 @@
 <?php
 
-namespace Buildwithlaravel\Ensemble;
+namespace BuildWithLaravel\Ensemble;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Buildwithlaravel\Ensemble\Skeleton\SkeletonClass
+ * @see \BuildWithLaravel\Ensemble\Skeleton\SkeletonClass
  */
 class EnsembleFacade extends Facade
 {
