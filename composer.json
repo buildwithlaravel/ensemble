@@ -1,0 +1,54 @@
+{
+    "name": "buildwithlaravel/ensemble",
+    "description": "A framework for building ai agents in laravel",
+    "keywords": [
+        "buildwithlaravel",
+        "ensemble"
+    ],
+    "homepage": "https://github.com/buildwithlaravel/ensemble",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Raphael Owino",
+            "email": "raphael@ralphowino.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4|^8.0",
+        "illuminate/support": "^8.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Buildwithlaravel\\Ensemble\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Buildwithlaravel\\Ensemble\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Buildwithlaravel\\Ensemble\\EnsembleServiceProvider"
+            ],
+            "aliases": {
+                "Ensemble": "Buildwithlaravel\\Ensemble\\EnsembleFacade"
+            }
+        }
+    }
+}
