@@ -44,8 +44,8 @@ jobs:
 
             - name: Install dependencies
               run: |
-                  composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
-                  composer require --dev "orchestra/testbench:${{ matrix.testbench }}" "nunomaduro/collision:${{ matrix.collision }}" --no-interaction --no-update
+                  composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update -W
+                  composer require --dev "orchestra/testbench:${{ matrix.testbench }}" "nunomaduro/collision:${{ matrix.collision }}" --no-interaction --no-update -W
                   composer update --${{ matrix.stability }} --prefer-dist --no-interaction -W
 
             - name: Run Pest tests
