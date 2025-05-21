@@ -22,7 +22,7 @@ jobs:
                       collision: ^8.0
                     - laravel: 12.*
                       testbench: ^10.0
-                      collision: ^9.0
+                      collision: ^8.0
 
         name: OS ${{ matrix.os }} - PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
 
@@ -39,14 +39,14 @@ jobs:
 
             - name: Ensure testbench cache directory exists
               run: |
-                mkdir -p testbench/bootstrap/cache
-                chmod -R 775 testbench/bootstrap/cache
+                mkdir -p workbench/bootstrap/cache
+                chmod -R 775 workbench/bootstrap/cache
 
             - name: Install dependencies
               run: |
                   composer require "laravel/framework:${{ matrix.laravel }}" --no-interaction --no-update
                   composer require --dev "orchestra/testbench:${{ matrix.testbench }}" "nunomaduro/collision:${{ matrix.collision }}" --no-interaction --no-update
-                  composer update --${{ matrix.stability }} --prefer-dist --no-interaction
+                  composer update --${{ matrix.stability }} --prefer-dist --no-interaction -W
 
             - name: Run Pest tests
               run: vendor/bin/pest
