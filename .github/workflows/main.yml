@@ -37,6 +37,11 @@ jobs:
                   extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, fileinfo
                   coverage: xdebug
 
+            - name: Ensure testbench cache directory exists
+              run: |
+                mkdir -p testbench/bootstrap/cache
+                chmod -R 775 testbench/bootstrap/cache
+
             - name: Install dependencies
               run: |
                   composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "nunomaduro/collision:${{ matrix.collision }}" --no-interaction --no-update
