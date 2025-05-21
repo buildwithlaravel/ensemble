@@ -2,67 +2,92 @@
 
 namespace BuildWithLaravel\Ensemble\Core;
 
-use Prism\Prism\Enums\Provider;
-use Prism\Prism\Prism;
+use BuildWithLaravel\Ensemble\Models\Run;
+use BuildWithLaravel\Ensemble\Support\MemoryStore;
+use BuildWithLaravel\Ensemble\Support\Traits\InteractsWithLLM;
+use RuntimeException;
 
 /**
  * Abstract base class for agents with built-in Prism LLM support.
  */
 abstract class Agent
 {
-    protected ?Provider $provider = null;
+    use InteractsWithLLM;
 
-    protected ?string $model = null;
+    protected Run $run;
 
-    protected function resolvePrismProvider(): ?Provider
+    protected MemoryStore $memoryStore;
+
+    public function __construct(Run $run)
     {
-        if ($this->provider !== null) {
-            return $this->provider;
+        $this->run = $run;
+        if (!$run->runnable) {
+            throw new RuntimeException('Agent run must have a runnable to use memory.');
+        }
+        $this->memoryStore = MemoryStore::for($run->runnable);
+    }
+
+    public function memory(): MemoryStore
+    {
+        return $this->memoryStore;
+    }
+
+    public function steps(): array
+    {
+        return [];
+    }
+
+    public function stateClass(): string
+    {
+        return GenericState::class;
+    }
+
+    public function getRun(): Run
+    {
+        return $this->run;
+    }
+
+    public function defineArtifact(Run $run, State $state): ?Artifact
+    {
+        // Data for the default status artifact
+        $artifactData = [
+            'run_id' => $run->id,
+            'agent_class' => $run->agent_class,
+            'status' => $run->status,
+            'current_step_index' => $run->current_step_index,
+            'last_ran_at' => $run->last_ran_at?->toIso8601String(),
+            'state_data' => $state->data, // Expose the raw state data for debugging/display
+            'recent_logs' => $run->logs()->latest()->take(10)->get()->map(fn($log) => [
+                'message' => $log->message,
+                'level' => $log->level,
+                'context' => $log->context,
+                'created_at' => $log->created_at?->toIso8601String(),
+            ])->toArray(), // Fetch last 10 logs and format them
+        ];
+
+        if ($state->isInterrupted()) {
+            $artifactData['interrupt'] = [
+                'type' => $state->getInterrupt()?->value,
+                'meta' => $state->getMeta(),
+            ];
         }
 
-        $configValue = config('ensemble.defaults.llm.provider');
-        if ($configValue === null) {
+        return Artifact::make('ensemble-status', $artifactData);
+    }
+
+    public function currentStep(?int $index = null): mixed
+    {
+        $steps = $this->steps();
+        $idx = $index ?? $this->run->current_step_index ?? 0;
+        if (!isset($steps[$idx])) {
             return null;
         }
-
-        // Convert config string value to Provider enum
-        return Provider::from($configValue);
-    }
-
-    /**
-     * Resolve the Prism model to use.
-     * Returns the agent's model if set, otherwise the default from config.
-     */
-    protected function resolvePrismModel(): ?string
-    {
-        return $this->model ?? config('ensemble.defaults.llm.model');
-    }
-
-    /**
-     * Get a configured Prism client instance.
-     */
-    protected function getPrismClient(): Prism
-    {
-        $provider = $this->resolvePrismProvider();
-        $model = $this->resolvePrismModel();
-
-        /** @var Prism $prism */
-        $prism = app(Prism::class);
-
-        if ($provider !== null && $model !== null) {
-            $prism->using($provider, $model);
+        $step = $steps[$idx];
+        if (is_callable($step)) {
+            // Pass the current state from the run
+            $state = $this->run->state;
+            return $step($state);
         }
-
-        return $prism;
-    }
-
-    /**
-     * Execute a callback with a configured Prism client instance.
-     */
-    public function withPrism(callable $callback): static
-    {
-        $callback($this->getPrismClient());
-
-        return $this;
+        return $step;
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use BuildWithLaravel\Ensemble\Tests\TestCase;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +11,8 @@ use BuildWithLaravel\Ensemble\Tests\TestCase;
 | need to change it using the "uses()" function to bind a different classes or traits.
 |
 */
+
+use BuildWithLaravel\Ensemble\Tests\TestCase;
 
 uses(TestCase::class)->in('Unit');
 // uses(Tests\TestCase::class)->in('Feature');

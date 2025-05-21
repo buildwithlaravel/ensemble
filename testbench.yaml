@@ -9,16 +9,21 @@ migrations:
 seeders:
   - Workbench\Database\Seeders\DatabaseSeeder
 
+env:
+  - ENSEMBLE_LLM_PROVIDER=ollama
+  - ENSEMBLE_LLM_MODEL=gemma3:4b
+
 workbench:
   start: '/'
   install: true
   health: false
+  laravel: ../../../sample
   discovers:
-    web: true
-    api: true
-    commands: true
+    web: false
+    api: false
+    commands: false
     components: false
-    factories: true
+    factories: false
     views: false
   build:
     - asset-publish
@@ -31,3 +36,8 @@ workbench:
     - from: storage
       to: workbench/storage
       reverse: true
+  env:
+    - QUEUE_CONNECTION=sync
+    - APP_KEY=AckfSECXIvnK5r28GVIWUAxmbBSjTsmF
+    - ENSEMBLE_LLM_PROVIDER=ollama
+    - ENSEMBLE_LLM_MODEL=deepseek-r1:8b

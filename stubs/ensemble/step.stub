@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }};
+
+use BuildWithLaravel\Ensemble\Core\Step;
+use BuildWithLaravel\Ensemble\Core\Agent;
+use BuildWithLaravel\Ensemble\Core\State;
+
+class {{ class }} extends Step
+{
+    public function handle(Agent $agent, State $state): State
+    {
+        // TODO: Implement step logic
+        return $state;
+    }
+} 

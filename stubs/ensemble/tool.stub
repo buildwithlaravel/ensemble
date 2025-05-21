@@ -1,0 +1,29 @@
+<?php
+
+namespace {{ namespace }};
+
+use BuildWithLaravel\Ensemble\Core\Tool;
+use BuildWithLaravel\Ensemble\Core\Agent;
+use BuildWithLaravel\Ensemble\Support\Parameter;
+use BuildWithLaravel\Ensemble\Enums\ParameterType;
+
+class {{ class }} extends Tool
+{
+    public function description(): string
+    {
+        return 'Describe what this tool does.';
+    }
+
+    public function parameters(): array
+    {
+        return [
+            // Parameter::make('param')->type(ParameterType::String)->description('A parameter')->required(),
+        ];
+    }
+
+    public function handle(array $arguments, Agent $agent): ?string
+    {
+        // TODO: Implement tool logic
+        return null;
+    }
+} 

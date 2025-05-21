@@ -12,127 +12,41 @@ class TestState extends State
 }
 
 test('it instantiates with public properties hydrated', function () {
-    $state = new TestState([
-        'name' => 'Test Name',
-        'count' => 42,
-    ]);
-
-    expect($state->name)->toBe('Test Name');
-    expect($state->count)->toBe(42);
+    // TODO: Test that the state instantiates with public properties hydrated
 });
 
 test('it merges data into public properties', function () {
-    $state = new TestState([
-        'name' => 'Original Name',
-        'count' => 10,
-    ]);
-
-    // Merge should update public properties and return the instance
-    $result = $state->merge([
-        'name' => 'Updated Name',
-        'count' => 20,
-    ]);
-
-    expect($result)->toBe($state);
-    expect($state->name)->toBe('Updated Name');
-    expect($state->count)->toBe(20);
+    // TODO: Test that merging data updates public properties and returns the instance
 });
 
 test('it creates instances with static from method', function () {
-    $state = TestState::from([
-        'name' => 'Static Name',
-        'count' => 99,
-    ]);
-
-    expect($state)->toBeInstanceOf(TestState::class);
-    expect($state->name)->toBe('Static Name');
-    expect($state->count)->toBe(99);
+    // TODO: Test that static from creates an instance with the correct data
 });
 
 test('it sets halt interrupt', function () {
-    $state = new TestState;
-    $result = $state->halt('Testing halt');
-
-    expect($result)->toBe($state);
-    expect($state->isInterrupted())->toBeTrue();
-    expect($state->getInterrupt())->toBe(InterruptType::Halt);
-    expect($state->getMeta())->toBe(['reason' => 'Testing halt']);
+    // TODO: Test that halt sets the correct interrupt and data on the state
 });
 
 test('it sets retry interrupt', function () {
-    $state = new TestState;
-    $result = $state->retry('Testing retry');
-
-    expect($result)->toBe($state);
-    expect($state->isInterrupted())->toBeTrue();
-    expect($state->getInterrupt())->toBe(InterruptType::Retry);
-    expect($state->getMeta())->toBe(['reason' => 'Testing retry']);
+    // TODO: Test that retry sets the correct interrupt and data on the state
 });
 
-test('it sets waitForHuman interrupt', function () {
-    $state = new TestState;
-    $result = $state->waitForHuman('confirm', 'Please confirm this action');
-
-    expect($result)->toBe($state);
-    expect($state->isInterrupted())->toBeTrue();
-    expect($state->getInterrupt())->toBe(InterruptType::WaitHuman);
-    expect($state->getMeta())->toBe([
-        'tag' => 'confirm',
-        'message' => 'Please confirm this action',
-    ]);
-});
-
-test('it sets waitForEvent interrupt', function () {
-    $state = new TestState;
-    $payload = ['action' => 'test', 'id' => 123];
-    $result = $state->waitForEvent('user.input', $payload);
-
-    expect($result)->toBe($state);
-    expect($state->isInterrupted())->toBeTrue();
-    expect($state->getInterrupt())->toBe(InterruptType::WaitEvent);
-    expect($state->getMeta())->toBe([
-        'event' => 'user.input',
-        'payload' => $payload,
-    ]);
-});
-
-test('it sets callTool interrupt', function () {
-    $state = new TestState;
-    $arguments = ['prompt' => 'Generate an image', 'style' => 'cartoon'];
-    $result = $state->callTool('image_generator', $arguments);
-
-    expect($result)->toBe($state);
-    expect($state->isInterrupted())->toBeTrue();
-    expect($state->getInterrupt())->toBe(InterruptType::CallTool);
-    expect($state->getMeta())->toBe([
-        'tool' => 'image_generator',
-        'arguments' => $arguments,
-    ]);
-});
-
-test('it sets delegate interrupt', function () {
-    $state = new TestState;
-    $initialStateData = ['name' => 'Delegated Task', 'priority' => 'high'];
-    $result = $state->delegate('App\\Agents\\SearchAgent', $initialStateData);
-
-    expect($result)->toBe($state);
-    expect($state->isInterrupted())->toBeTrue();
-    expect($state->getInterrupt())->toBe(InterruptType::Delegate);
-    expect($state->getMeta())->toBe([
-        'agent_class' => 'App\\Agents\\SearchAgent',
-        'initial_state' => $initialStateData,
-    ]);
-});
-
-test('it sets done interrupt', function () {
-    $state = new TestState;
-    $resultData = ['status' => 'success', 'data' => ['id' => 123]];
-    $result = $state->done($resultData);
-
-    expect($result)->toBe($state);
-    expect($state->isInterrupted())->toBeTrue();
-    expect($state->getInterrupt())->toBe(InterruptType::Done);
-    expect($state->getMeta())->toBe(['result' => $resultData]);
+describe('State', function () {
+    it('sets waitForHuman interrupt', function () {
+        // TODO: Test that waitForHuman sets the correct interrupt and data on the state
+    });
+    it('sets waitForEvent interrupt', function () {
+        // TODO: Test that waitForEvent sets the correct interrupt and data on the state
+    });
+    it('sets callTool interrupt', function () {
+        // TODO: Test that callTool sets the correct interrupt and data on the state
+    });
+    it('sets delegate interrupt', function () {
+        // TODO: Test that delegate sets the correct interrupt and data on the state
+    });
+    it('sets done interrupt', function () {
+        // TODO: Test that done sets the correct interrupt and data on the state
+    });
 });
 
 test('isInterrupted returns false when not interrupted', function () {

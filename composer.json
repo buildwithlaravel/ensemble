@@ -18,17 +18,18 @@
     "require": {
         "php": "^8.1",
         "illuminate/support": "^10.0|^11.0|^12.0",
-        "prism-php/prism": "^0.66.0",
-        "prism-php/relay": "^0.4.0"
+        "prism-php/prism": "^0.66.0"
     },
     "require-dev": {
         "laravel/pint": "^1.22",
         "orchestra/testbench": "^8.0|^9.0|^10.0",
-        "pestphp/pest": "^2.36"
+        "pestphp/pest": "^2.36",
+        "spatie/laravel-ray": "^1.40"
     },
     "autoload": {
         "psr-4": {
-            "BuildWithLaravel\\Ensemble\\": "src"
+          "BuildWithLaravel\\Ensemble\\": "src",
+          "BuildWithLaravel\\Ensemble\\Database\\": "database"
         }
     },
     "autoload-dev": {

@@ -3,35 +3,43 @@
 namespace BuildWithLaravel\Ensemble\Core;
 
 use BuildWithLaravel\Ensemble\Enums\InterruptType;
+use Illuminate\Database\Eloquent\Concerns\HasAttributes;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Fluent;
+use BuildWithLaravel\Ensemble\Core\ArtifactAction;
+use BuildWithLaravel\Ensemble\Core\ArtifactActionGroup;
 
 /**
- * Abstract base class for agent state DTOs.
+ * @property ?InterruptType interrupt
+ * @property array $interruptData
  */
 abstract class State extends Fluent
 {
-    protected ?InterruptType $interrupt = null;
+    use HasAttributes;
 
-    protected ?array $meta = null;
-
-    /**
-     * Hydrate public properties from $data.
-     */
-    public function __construct(array $data = [])
+    public function getCasts()
     {
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
-            }
-        }
-        parent::__construct($data);
+        return [
+            ...$this->casts,
+            'interrupt' => InterruptType::class,
+            'interruptData' => 'array'
+        ];
     }
 
+
     // --- Fluent interrupt methods ---
+    public function error(string $reason): static
+    {
+        $this->interrupt = InterruptType::Error;
+        $this->interruptData = ['reason' => $reason];
+
+        return $this;
+    }
+
     public function halt(string $reason): static
     {
         $this->interrupt = InterruptType::Halt;
-        $this->meta = ['reason' => $reason];
+        $this->interruptData = ['reason' => $reason];
 
         return $this;
     }
@@ -39,23 +47,40 @@ abstract class State extends Fluent
     public function retry(string $reason): static
     {
         $this->interrupt = InterruptType::Retry;
-        $this->meta = ['reason' => $reason];
+        $this->interruptData = ['reason' => $reason];
 
         return $this;
     }
 
-    public function waitForHuman(string $tag, string $message): static
+    public function waitForQueued(string $tag): static
+    {
+        $this->interrupt = InterruptType::WaitForQueue;
+        $this->interruptData = ['tag' => $tag];
+
+        return $this;
+    }
+
+    /**
+     * @param string $tag
+     * @param string $message
+     * @param array<ArtifactAction|ArtifactActionGroup> $actions
+     * @return static
+     */
+    public function waitForHuman(string $tag, string $message, array $actions = []): static
     {
         $this->interrupt = InterruptType::WaitHuman;
-        $this->meta = ['tag' => $tag, 'message' => $message];
-
+        $this->interruptData = [
+            'tag' => $tag,
+            'message' => $message,
+            'actions' => $actions,
+        ];
         return $this;
     }
 
     public function waitForEvent(string $event, array $payload = []): static
     {
         $this->interrupt = InterruptType::WaitEvent;
-        $this->meta = ['event' => $event, 'payload' => $payload];
+        $this->interruptData = ['event' => $event, 'payload' => $payload];
 
         return $this;
     }
@@ -63,7 +88,7 @@ abstract class State extends Fluent
     public function callTool(string $tool, array $arguments = []): static
     {
         $this->interrupt = InterruptType::CallTool;
-        $this->meta = ['tool' => $tool, 'arguments' => $arguments];
+        $this->interruptData = ['tool' => $tool, 'arguments' => $arguments];
 
         return $this;
     }
@@ -71,7 +96,7 @@ abstract class State extends Fluent
     public function delegate(string $agentClass, array $initialStateData = []): static
     {
         $this->interrupt = InterruptType::Delegate;
-        $this->meta = ['agent_class' => $agentClass, 'initial_state' => $initialStateData];
+        $this->interruptData = ['agent' => $agentClass, 'initial_state' => $initialStateData];
 
         return $this;
     }
@@ -79,7 +104,7 @@ abstract class State extends Fluent
     public function done(mixed $result = null): static
     {
         $this->interrupt = InterruptType::Done;
-        $this->meta = ['result' => $result];
+        $this->interruptData = ['result' => $result];
 
         return $this;
     }
@@ -92,26 +117,12 @@ abstract class State extends Fluent
 
     public function getInterrupt(): ?InterruptType
     {
-        return $this->interrupt;
+        return InterruptType::tryFrom($this->interrupt);
     }
 
     public function getMeta(): ?array
     {
-        return $this->meta;
-    }
-
-    /**
-     * Merge new data into public properties.
-     */
-    public function merge(array $data): static
-    {
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                $this->$key = $value;
-            }
-        }
-
-        return $this;
+        return $this->interruptData;
     }
 
     /**
@@ -120,5 +131,12 @@ abstract class State extends Fluent
     public static function from(array $data): static
     {
         return new static($data);
+    }
+
+    public function resetInterrupt(): static
+    {
+        Arr::forget($this->attributes, ['interrupt', 'interruptData']);
+
+        return $this;
     }
 }

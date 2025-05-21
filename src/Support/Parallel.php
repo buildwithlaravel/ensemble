@@ -2,26 +2,42 @@
 
 namespace BuildWithLaravel\Ensemble\Support;
 
-class Parallel
+use JsonSerializable;
+
+class Parallel implements JsonSerializable
 {
-    /**
-     * The steps to be executed in parallel.
-     */
-    public array $steps;
 
     /**
-     * Create a new Parallel instance.
+     * @var callable
      */
-    public function __construct(array $steps)
+    protected $onFailCallback;
+
+    public function __construct(public array $steps)
     {
-        $this->steps = $steps;
     }
 
-    /**
-     * Create a new Parallel instance.
-     */
-    public static function make(array $steps): self
+    public static function make(array $steps): static
     {
-        return new self($steps);
+        return new static($steps);
+    }
+
+    public function whenHasFailedSteps(callable $callback): static
+    {
+        $this->onFailCallback = $callback;
+
+        return $this;
+    }
+
+    public function onStepsFailed()
+    {
+
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return [
+            'name' => static::class,
+            'steps' => $this->steps,
+        ];
     }
 }

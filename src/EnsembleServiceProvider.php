@@ -2,6 +2,14 @@
 
 namespace BuildWithLaravel\Ensemble;
 
+use BuildWithLaravel\Ensemble\Console\MakeAgentCommand;
+use BuildWithLaravel\Ensemble\Console\MakeEnsembleWorkflowCommand;
+use BuildWithLaravel\Ensemble\Console\MakeStepCommand;
+use BuildWithLaravel\Ensemble\Console\MakeToolCommand;
+use BuildWithLaravel\Ensemble\Console\ResumeAgent;
+use BuildWithLaravel\Ensemble\Console\RunAgent;
+use BuildWithLaravel\Ensemble\Runtime\InterruptHandler;
+use BuildWithLaravel\Ensemble\Runtime\RunResumer;
 use Illuminate\Support\ServiceProvider;
 
 class EnsembleServiceProvider extends ServiceProvider
@@ -19,28 +27,43 @@ class EnsembleServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('ensemble.php'),
-            ], 'config');
+        $this->publishes([
+            __DIR__ . '/../config/ensemble.php' => config_path('ensemble.php'),
+        ], 'ensemble-config');
 
-            // Publishing the views.
-            /*$this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/ensemble'),
-            ], 'views');*/
+        $this->publishes([
+            __DIR__ . '/../database/migrations/' => database_path('migrations'),
+        ], 'ensemble-migrations');
 
-            // Publishing assets.
-            /*$this->publishes([
-                __DIR__.'/../resources/assets' => public_path('vendor/ensemble'),
-            ], 'assets');*/
+        // Publishing the views.
+        /*$this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/ensemble'),
+        ], 'views');*/
 
-            // Publishing the translation files.
-            /*$this->publishes([
-                __DIR__.'/../resources/lang' => resource_path('lang/vendor/ensemble'),
-            ], 'lang');*/
+        // Publishing assets.
+        /*$this->publishes([
+            __DIR__.'/../resources/assets' => public_path('vendor/ensemble'),
+        ], 'assets');*/
 
-            // Registering package commands.
-            // $this->commands([]);
+        // Publishing the translation files.
+        /*$this->publishes([
+            __DIR__.'/../resources/lang' => resource_path('lang/vendor/ensemble'),
+        ], 'lang');*/
+
+        // Registering package commands.
+        $this->commands([
+            MakeAgentCommand::class,
+            MakeEnsembleWorkflowCommand::class,
+            MakeStepCommand::class,
+            MakeToolCommand::class,
+            RunAgent::class,
+            ResumeAgent::class,
+        ]);
+
+        // Register interrupt handlers from config
+        $interruptHandler = $this->app->make(InterruptHandler::class);
+        foreach (config('ensemble.interrupt_handlers', []) as $handlerClass) {
+            $interruptHandler->register($this->app->make($handlerClass));
         }
     }
 
@@ -49,12 +72,22 @@ class EnsembleServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'ensemble');
+        $this->mergeConfigFrom(__DIR__ . '/../config/ensemble.php', 'ensemble');
 
-        // Register the main class to use with the facade
-        $this->app->singleton('ensemble', function () {
-            return new Ensemble;
+        $this->app->singleton(InterruptHandler::class, function ($app) {
+            return new InterruptHandler;
         });
+        $this->app->singleton(RunResumer::class, RunResumer::class);
+        $this->app->bind(Ensemble::class, Ensemble::class);
+        $this->app->bind('ensemble', function ($app) {
+            return $app->make(Ensemble::class);
+        });
+
+        $this->commands([
+            MakeEnsembleWorkflowCommand::class,
+            MakeAgentCommand::class,
+            MakeStepCommand::class,
+            MakeToolCommand::class,
+        ]);
     }
 }

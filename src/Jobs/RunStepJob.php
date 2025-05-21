@@ -2,80 +2,51 @@
 
 namespace BuildWithLaravel\Ensemble\Jobs;
 
-use BuildWithLaravel\Ensemble\Core\State;
+use BuildWithLaravel\Ensemble\Core\Step;
+use BuildWithLaravel\Ensemble\Enums\EventType;
+use BuildWithLaravel\Ensemble\Enums\InterruptType;
 use BuildWithLaravel\Ensemble\Models\Run;
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use RuntimeException;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 
 class RunStepJob implements ShouldQueue
 {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
+    use Batchable;
 
-    protected string $runId;
+    public $timeout = 300;
 
-    protected string $stepClass;
-
-    /**
-     * Create a new job instance.
-     */
-    public function __construct(string $runId, string $stepClass)
+    public function __construct(protected Run $run, protected Step $step, protected bool $resumeAfter = false)
     {
-        $this->runId = $runId;
-        $this->stepClass = $stepClass;
     }
 
-    /**
-     * Execute the job.
-     */
+
     public function handle(): void
     {
-        /** @var Run $run */
-        $run = Run::find($this->runId);
-        if (! $run) {
-            Log::error('RunStepJob: Run not found', ['runId' => $this->runId]);
+        $state = $this->step->handle($this->run->getAgentInstance(), $this->run->state);
+        $this->run->event(EventType::StateSnapshot, ['status' => $this->run->status, 'state' => $state]);
+        $this->run->state = $state->all();
+        $this->run->save();
+        if (!$state->isInterrupted() || $state->getInterrupt() == InterruptType::WaitForQueue) {
+            $this->run->event(EventType::StepFinished, [
+                'step' => $this->step,
+                'status' => $this->run->status,
+                'state' => $state
+            ]);
 
-            return;
-        }
-
-        // Hydrate agent instance (placeholder method, must exist on Run)
-        if (! method_exists($run, 'getAgentInstance')) {
-            Log::error('RunStepJob: getAgentInstance method missing on Run', ['runId' => $this->runId]);
-
-            return;
-        }
-        $agent = $run->getAgentInstance();
-        $state = $run->state();
-
-        $step = app($this->stepClass);
-
-        try {
-            $newState = $step->handle($agent, $state);
-
-            if (! $newState instanceof State) {
-                $run->createLog('Step did not return a valid State instance', ['step' => $this->stepClass]);
-                throw new RuntimeException('Step must return an instance of State');
+            if ($this->resumeAfter) {
+                $this->run->current_step_index += 1;
+                $this->run->resume([]);
             }
-
-            // Update run state and status
-            $run->state = method_exists($newState, 'getData') ? $newState->getData() : (array) $newState;
-            if ($newState->isInterrupted()) {
-                $interrupt = $newState->getInterrupt();
-                $run->status = $interrupt ? $interrupt->value : 'interrupted';
-                // Optionally store meta or handle specific interrupts
-            }
-            // If not interrupted, keep status as running (workflow decides completion)
-            $run->save();
-        } catch (\Throwable $e) {
-            $run->status = 'failed';
-            $run->createLog('Exception in RunStepJob', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            $run->save();
-            throw $e; // Let Laravel queue handle retries/failure
         }
+    }
+
+    public function middleware()
+    {
+        return [
+            new SkipIfBatchCancelled
+        ];
     }
 }

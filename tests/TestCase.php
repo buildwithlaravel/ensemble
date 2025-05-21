@@ -2,14 +2,20 @@
 
 namespace BuildWithLaravel\Ensemble\Tests;
 
+use BuildWithLaravel\Ensemble\EnsembleServiceProvider;
+use Orchestra\Testbench\Attributes\WithMigration;
+use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as Orchestra;
 
+#[WithMigration]
 abstract class TestCase extends Orchestra
 {
+    use WithWorkbench;
+
     protected function getPackageProviders($app)
     {
         return [
-            \BuildWithLaravel\Ensemble\EnsembleServiceProvider::class,
+            EnsembleServiceProvider::class,
         ];
     }
 
