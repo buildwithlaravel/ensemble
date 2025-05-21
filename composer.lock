@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4e1b8a0a7900a3c1d35c32775fa26f99",
+    "content-hash": "d7bacc3ae9192cf4f6bd88f7173ccb6f",
     "packages": [
         {
             "name": "brick/math",
@@ -1056,16 +1056,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.44.7",
+            "version": "v11.45.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "00bc6ac91a6d577bf051c18ddaa638c0d221e1c7"
+                "reference": "d0730deb427632004d24801be7ca1ed2c10fbc4e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/00bc6ac91a6d577bf051c18ddaa638c0d221e1c7",
-                "reference": "00bc6ac91a6d577bf051c18ddaa638c0d221e1c7",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/d0730deb427632004d24801be7ca1ed2c10fbc4e",
+                "reference": "d0730deb427632004d24801be7ca1ed2c10fbc4e",
                 "shasum": ""
             },
             "require": {
@@ -1086,7 +1086,7 @@
                 "guzzlehttp/uri-template": "^1.0",
                 "laravel/prompts": "^0.1.18|^0.2.0|^0.3.0",
                 "laravel/serializable-closure": "^1.3|^2.0",
-                "league/commonmark": "^2.6",
+                "league/commonmark": "^2.7",
                 "league/flysystem": "^3.25.1",
                 "league/flysystem-local": "^3.25.1",
                 "league/uri": "^7.5.1",
@@ -1173,7 +1173,7 @@
                 "league/flysystem-read-only": "^3.25.1",
                 "league/flysystem-sftp-v3": "^3.25.1",
                 "mockery/mockery": "^1.6.10",
-                "orchestra/testbench-core": "^9.11.2",
+                "orchestra/testbench-core": "^9.13.2",
                 "pda/pheanstalk": "^5.0.6",
                 "php-http/discovery": "^1.15",
                 "phpstan/phpstan": "^2.0",
@@ -1267,7 +1267,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-04-25T12:40:47+00:00"
+            "time": "2025-05-20T15:15:58+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -2534,78 +2534,6 @@
                 }
             ],
             "time": "2025-05-04T15:55:15+00:00"
-        },
-        {
-            "name": "prism-php/relay",
-            "version": "v0.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/prism-php/relay.git",
-                "reference": "2bafe23ebd162e4997dd3699a61be3b90fca2d45"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/prism-php/relay/zipball/2bafe23ebd162e4997dd3699a61be3b90fca2d45",
-                "reference": "2bafe23ebd162e4997dd3699a61be3b90fca2d45",
-                "shasum": ""
-            },
-            "require": {
-                "laravel/framework": "^11.0|^12.0",
-                "php": "^8.3",
-                "prism-php/prism": ">=0.56 ^0"
-            },
-            "require-dev": {
-                "guzzlehttp/guzzle": "^7.8",
-                "laravel/pint": "^1.14",
-                "mockery/mockery": "^1.6",
-                "orchestra/testbench": "^10.0",
-                "pestphp/pest": "^3.0",
-                "pestphp/pest-plugin-arch": "^3.0",
-                "pestphp/pest-plugin-laravel": "^3.0",
-                "phpstan/extension-installer": "^1.3",
-                "phpstan/phpstan": "^1.11",
-                "phpstan/phpstan-deprecation-rules": "^1.2",
-                "projektgopher/whisky": "^0.7.0",
-                "rector/rector": "^1.1"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Relay": "Prism\\Relay\\Facades\\Relay"
-                    },
-                    "providers": [
-                        "Prism\\Relay\\RelayServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Prism\\Relay\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "TJ MIller",
-                    "email": "hello@echolabs.dev"
-                }
-            ],
-            "description": "A Prism tool for interacting with MCP servers",
-            "support": {
-                "issues": "https://github.com/prism-php/relay/issues",
-                "source": "https://github.com/prism-php/relay/tree/v0.4.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/sixlive",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-04-16T14:23:17+00:00"
         },
         {
             "name": "psr/clock",
@@ -6910,16 +6838,16 @@
         },
         {
             "name": "orchestra/sidekick",
-            "version": "v1.2.7",
+            "version": "v1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/sidekick.git",
-                "reference": "19f19a5780fe78cad76222b364438aad0df65a83"
+                "reference": "4e01680e7109596072f22382626970ba1a2ab92a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/sidekick/zipball/19f19a5780fe78cad76222b364438aad0df65a83",
-                "reference": "19f19a5780fe78cad76222b364438aad0df65a83",
+                "url": "https://api.github.com/repos/orchestral/sidekick/zipball/4e01680e7109596072f22382626970ba1a2ab92a",
+                "reference": "4e01680e7109596072f22382626970ba1a2ab92a",
                 "shasum": ""
             },
             "require": {
@@ -6961,9 +6889,9 @@
             "description": "Packages Toolkit Utilities and Helpers for Laravel",
             "support": {
                 "issues": "https://github.com/orchestral/sidekick/issues",
-                "source": "https://github.com/orchestral/sidekick/tree/v1.2.7"
+                "source": "https://github.com/orchestral/sidekick/tree/v1.2.8"
             },
-            "time": "2025-05-19T03:32:53+00:00"
+            "time": "2025-05-21T11:25:24+00:00"
         },
         {
             "name": "orchestra/testbench",
