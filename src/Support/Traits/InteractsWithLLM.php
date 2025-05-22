@@ -6,6 +6,7 @@ use BuildWithLaravel\Ensemble\Core\Tool;
 use BuildWithLaravel\Ensemble\Enums\LlmMode;
 use BuildWithLaravel\Ensemble\Enums\ParameterType;
 use BuildWithLaravel\Ensemble\Support\Parameter;
+use BuildWithLaravel\Ensemble\Support\PrismClient;
 use Illuminate\Support\Traits\Conditionable;
 use Prism\Prism\Contracts\Schema;
 use Prism\Prism\Enums\Provider;
@@ -40,14 +41,10 @@ trait InteractsWithLLM
         return config('ensemble.llm.model');
     }
 
-    protected function getPrismClient($mode = LlmMode::TEXT): PendingTextRequest|PendingStructuredRequest
+    protected function getPrismClient($mode = LlmMode::TEXT): PrismClient
     {
         /** @var PendingTextRequest|PendingStructuredRequest $prism */
-        $prism = match ($mode) {
-            LlmMode::JSON => Prism::structured(),
-            LlmMode::TEXT => Prism::text(),
-            LlmMode::EMBED => Prism::embeddings(),
-        };
+        $prism = new PrismClient($mode);
 
         $prism->using($this->resolvePrismProvider(), $this->resolvePrismModel())
             ->withClientOptions($this->clientOptions());

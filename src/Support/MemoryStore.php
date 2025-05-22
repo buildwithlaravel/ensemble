@@ -4,6 +4,7 @@ namespace BuildWithLaravel\Ensemble\Support;
 
 use BuildWithLaravel\Ensemble\Models\Memory;
 use BuildWithLaravel\Ensemble\Support\Traits\ResolvesEnsembleModels;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class MemoryStore
@@ -14,7 +15,7 @@ class MemoryStore
 
     private function __construct(Model $memoryable)
     {
-        if (! ($memoryable instanceof Model)) {
+        if (!($memoryable instanceof Model)) {
             throw new \InvalidArgumentException('MemoryStore requires a valid Eloquent model instance.');
         }
         $this->memoryable = $memoryable;
@@ -27,9 +28,7 @@ class MemoryStore
 
     public function get(string $key, mixed $default = null): mixed
     {
-        $memoryClass = self::resolveModel('memory', Memory::class);
-        $memory = $memoryClass::where('memoryable_id', $this->memoryable->getKey())
-            ->where('memoryable_type', $this->memoryable->getMorphClass())
+        $memory = $this->query()
             ->where('key', $key)
             ->first();
 
@@ -52,9 +51,7 @@ class MemoryStore
 
     public function forget(string $key): static
     {
-        $memoryClass = self::resolveModel('memory', Memory::class);
-        $memoryClass::where('memoryable_id', $this->memoryable->getKey())
-            ->where('memoryable_type', $this->memoryable->getMorphClass())
+        $this->query()
             ->where('key', $key)
             ->delete();
 
@@ -63,10 +60,7 @@ class MemoryStore
 
     public function all(): array
     {
-        $memoryClass = self::resolveModel('memory', Memory::class);
-
-        return $memoryClass::where('memoryable_id', $this->memoryable->getKey())
-            ->where('memoryable_type', $this->memoryable->getMorphClass())
+        return $this->query()
             ->get()
             ->pluck('value', 'key')
             ->toArray();
@@ -74,11 +68,16 @@ class MemoryStore
 
     public function flush(): static
     {
-        $memoryClass = self::resolveModel('memory', Memory::class);
-        $memoryClass::where('memoryable_id', $this->memoryable->getKey())
-            ->where('memoryable_type', $this->memoryable->getMorphClass())
+        $this->query()
             ->delete();
 
         return $this;
+    }
+
+    protected function query(): Builder
+    {
+        /** @var Memory $memoryClass */
+        $memoryClass = self::resolveModel('memory', Memory::class);
+        return $memoryClass::for($this->memoryable);
     }
 }
